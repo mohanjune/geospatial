@@ -1,0 +1,69 @@
+
+<html>
+<head>
+<title>LinkedIn JavaScript API Hello World</title>
+
+<!-- 1. Include the LinkedIn JavaScript API and define a onLoad callback function -->
+<script type="text/javascript" src="http://platform.linkedin.com/in.js">
+  api_key: dm6hc1hjj3sh
+  onLoad: onLinkedInLoad
+  authorize: true
+</script>
+
+<script type="text/javascript">
+  // 2. Runs when the JavaScript framework is loaded
+
+  function onLinkedInLoad() {
+
+    IN.Event.on(IN, "auth", onLinkedInAuth);
+  }
+
+  // 2. Runs when the viewer has authenticated
+
+  function onLinkedInAuth() {
+   	IN.API.Profile("me").fields(["firstName", "location", "skills"]).result(displayProfiles);
+   	IN.API.MemberUpdates("me").fields(["isLiked","updateKey","updateType","updateContent:(person:(headline,first-name))"]).result(displayNetworkUpdates);
+  }
+
+  // 2. Runs when the Profile() API call returns successfully
+  function displayProfiles(profiles) {
+    member = profiles.values[0];
+
+    alert("No of skills values " + member.skills.values.length);
+
+    /*
+    for(var i= 0; i < member.skills.values.length; i++) {
+    	alert(member.skills.values[i].skill.name);
+	}*/
+
+    document.getElementById("profiles").innerHTML = 
+       "<p id=\"" + member.id + "\">" +  member.firstName + " country: " + member.location.country.code +  " locationname: " + 
+       	member.location.name + "skills: " +  member.skills.values[0].skill.name + "</p>";
+  }
+
+
+  function displayNetworkUpdates(updates) {
+  var profileDiv = document.getElementById("networkupdates");
+     
+  for (var i in updates.values) {
+    var key = updates.values[i].updateKey; // each update has a unique key
+    var type = updates.values[i].updateType; // the person sharing content
+
+    profileDiv.innerHTML += "<p id='" + key + "'>" + type + " shared " + ".</p>";
+   }     
+}
+
+</script>
+</head>
+<body>
+<!-- 3. Displays a button to let the viewer authenticate -->
+
+<script type="IN/Login"></script>
+<script type="IN/Logout"></script>
+<!-- 4. Placeholder for the greeting -->
+
+<div id="profiles"></div>
+<p></p>
+<div id="networkupdates"></div>
+</body>
+</html>
