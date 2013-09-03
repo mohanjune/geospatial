@@ -1,4 +1,4 @@
 geospatial
 ==========
 
-Create a geospatial netoworking as well social analytics
+Create a geospatial networking as well social analytics
