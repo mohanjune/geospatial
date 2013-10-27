@@ -22,8 +22,10 @@
 
   function onLinkedInAuth() {
    	IN.API.Profile("me").fields(["firstName", "location", "skills"]).result(displayProfiles);
-   	IN.API.MemberUpdates("me").fields(["isLiked","updateKey","updateType","updateContent:(person:(headline,first-name))"]).result(displayNetworkUpdates);
+   	IN.API.MemberUpdates("me").fields(["updateKey","updateType"]).result(displayNetworkUpdates);
   }
+
+  
 
   // 2. Runs when the Profile() API call returns successfully
   function displayProfiles(profiles) {
@@ -43,7 +45,9 @@
 
 
   function displayNetworkUpdates(updates) {
-  var profileDiv = document.getElementById("networkupdates");
+  
+  	var profileDiv = document.getElementById("networkupdates");
+
      
   for (var i in updates.values) {
     var key = updates.values[i].updateKey; // each update has a unique key

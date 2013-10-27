@@ -26,6 +26,9 @@
   api_key: dm6hc1hjj3sh
   onLoad: onLinkedInLoad
   authorize: true
+
+  //skills
+  //onLoad: drawGraph()
 </script>
 
 <script type="text/javascript">
@@ -36,6 +39,8 @@
 
   function onLinkedInAuth() {
    	IN.API.Profile("me").fields(["skills"]).result(drawGraph);
+
+
   }
 
 
@@ -55,40 +60,53 @@ function drawGraph(skills) {
 	//alert(skills.values[0].skills.values[0].skill.name);
 	//alert(skills.values[0].skills.values[0].id);
 
-	var newSkills = {skillNames: []};
-	var nodes = {};
+	var jvmskills = ["Java", "Spring", "Hibernate", "Struts", "Jsp", "Servlets", "JPA", "EJB"];
+	var javaXmlSkills = ["XMLBeans", "Jaxb", "Castor", "Xerces"];
+	var jvmOther = ["Scala", "Clojure", "Groovy"];
+
+	var nodes = {
+		skills : []
+	};
 	
-				//skills.values[0].skills.values.length
-	for(var i= 0; i <= 4 ; i++) {
-    	newSkills.skillNames.push({"name": skills.values[0].skills.values[i].skill.name});
+	var edges = {
+		links : []
+	};
 
-    	//edges["source"] = 0;
-    	//edges["target"] = i+1;
-    	/*
-    	if (newSkills.skillNames.name=="Java") {
-    		nodes.push({"name":newSkills.skillNames});
-    	} */
+	for(var i=0; i <= skills.values.length; i++) {
 
-    }
+    	if (skills.values[0].skills.values[0].skill.name.indexOf(jvmskills) > -1) {
+	    	nodes.skills.push({ 
+	        	"name"  : skills.values[0].skills.values[0].skill.name ,
+	        	"group" : 1
+	    	});
 
-	var edges = [
-					{"source": 0, "target": 1},
-					{"source": 0, "target": 2},
-					{"source": 0, "target": 3},
-					{"source": 0, "target": 4},
-					{"source": 0, "target": 4}
-				];
+	    	edges.links.push({
+	    		"source" : i,
+	    		"target" : 1,
+	    		"value" : 1
+	    	});
 
+    	} else {
+	    	nodes.skills.push({ 
+	        	"name"  : skills.values[0].skills.values[0].skill.name ,
+    	    	"group" : 2
+	    	});
 
-    //alert(newSkills.skillNames.length);
-    
-    //alert("Length of SkillNames " + newSkills.skillNames.length +  " IDs " +  newSkills.ids.length);
+	    	edges.links.push({
+	    		"source" : i,
+	    		"target" : 2,
+	    		"value" : 2
+	    	});
+
+    	}
+	}
+
 
     var width = 960,
     height = 500;
 
  	var force = d3.layout.force()
- 		.nodes(newSkills.skillNames)
+ 		.nodes(nodes)
  		.links(edges)
     	.size([width, height])
     	.charge(-100)
@@ -113,12 +131,11 @@ function drawGraph(skills) {
       	.attr("class", "link");
 
   	// Update nodes.
-  	node = node.data(newSkills.skillNames);
+  	node = node.data(skills);
 
   	node.exit().remove();
 
   	var nodeEnter = node.enter().append("g")
-      .attr("class", "node")
       .call(force.drag);
 
   	nodeEnter.append("circle")
